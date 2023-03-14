@@ -23,6 +23,8 @@ app.use(cors({
     origin: "*"
 }))
 
+app.use(express.static("public"))
+
 async function requestVegvesene(path: string) {
     const url = `https://www.vegvesen.no${path}`
 
