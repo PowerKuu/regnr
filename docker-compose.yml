@@ -2,7 +2,6 @@ version: "3.8"
 
 services:
   api:
-    container_name: api
-    build: /
+    build: .
     ports:
       - 3000:3000
