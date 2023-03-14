@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 
 import dotenv from "dotenv"
+import { resolve } from "path"
 
 import axios from "axios"
 
@@ -23,7 +24,7 @@ app.use(cors({
     origin: "*"
 }))
 
-app.use(express.static("public"))
+app.use(express.static(resolve(__dirname, "public")))
 
 async function requestVegvesene(path: string) {
     const url = `https://www.vegvesen.no${path}`
