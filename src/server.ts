@@ -1,16 +1,27 @@
 import express from "express"
+import cors from "cors"
+
+import dotenv from "dotenv"
+
 import axios from "axios"
 
-
 const app = express()
+dotenv.config()
 
 const config = {
-    port: 3000,
-    statensVegvesenAuthorization: "7d099692-1dc9-43c2-a195-dc1882e0751a"
+    port: process.env.PORT || 3000,
+    statensVegvesenAuthorization: process.env.STATENS_VEGVESEN_AUTHORIZATION
+}
+
+if (!config.statensVegvesenAuthorization) {
+    throw new Error("Missing environment variable STATENS_VEGVESEN_AUTHORIZATION")
 }
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors({
+    origin: "*"
+}))
 
 async function requestVegvesene(path: string) {
     const url = `https://www.vegvesen.no${path}`
