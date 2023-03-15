@@ -1,5 +1,4 @@
 import express from "express"
-import cors from "cors"
 
 import dotenv from "dotenv"
 import { resolve } from "path"
@@ -20,10 +19,6 @@ if (!config.statensVegvesenAuthorization) {
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors({
-    origin: "*"
-}))
-
 app.use(express.static(resolve(__dirname, "public")))
 
 async function requestVegvesene(path: string) {
@@ -36,12 +31,19 @@ async function requestVegvesene(path: string) {
     return response.data
 }
 
-app.post("/api/regnr", async (req, res) => {
+app.post("/api/basic", async (req, res) => {
     const { regnr } = req.body
-
     const data = await requestVegvesene(`/ws/no/vegvesen/kjoretoy/felles/datautlevering/enkeltoppslag/kjoretoydata?kjennemerke=${regnr}`)
     
     res.json(data)
+})
+
+app.post("/api/advanced", async (req, res) => {
+    res.json({})
+})
+
+app.post("/api/vipps", async (req, res) => {
+    res.json({})
 })
 
 app.listen(config.port, () => {
