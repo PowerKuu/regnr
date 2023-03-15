@@ -1,46 +1,40 @@
 import express from "express"
-import axios from "axios"
-
 import dotenv from "dotenv"
 
 import { resolve } from "path"
 
+import { regnrBasic, regnrAdvanced } from "./vegvesene"
 
-const app = express()
 dotenv.config()
+const app = express()
 
 const config = {
-    port: process.env.PORT || 3000,
-    statensVegvesenAuthorization: process.env.STATENS_VEGVESEN_AUTHORIZATION
+    port: process.env.PORT as string || "3000",
+    vegvesenBasicAuthorization: process.env.VEGVESEN_BASIC_AUTHORIZATION as string,
+    vegvesenAdvancedAuthorization: process.env.VEGVESEN_ADVANCED_AUTHORIZATION as string
 }
 
-if (!config.statensVegvesenAuthorization) {
-    throw new Error("Missing environment variable STATENS_VEGVESEN_AUTHORIZATION")
+if (!config.vegvesenBasicAuthorization || !config.vegvesenAdvancedAuthorization) {
+    throw new Error("Missing authorization environment variable")
 }
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(resolve(__dirname, "public")))
 
-async function requestVegvesene(path: string) {
-    const url = `https://www.vegvesen.no${path}`
-
-    const response = await axios.get(url, { headers: {
-        "SVV-Authorization": `Apikey ${config.statensVegvesenAuthorization}`
-    }})
-
-    return response.data
-}
-
 app.post("/api/basic", async (req, res) => {
     const { regnr } = req.body
-    const data = await requestVegvesene(`/ws/no/vegvesen/kjoretoy/felles/datautlevering/enkeltoppslag/kjoretoydata?kjennemerke=${regnr}`)
+    const data = await regnrBasic(config.vegvesenBasicAuthorization, regnr)
     
     res.json(data)
 })
 
 app.post("/api/advanced", async (req, res) => {
-    res.json({})
+    const { regnr } = req.body
+
+    const data = await regnrAdvanced(config.vegvesenAdvancedAuthorization, regnr)
+
+    res.json(data)
 })
 
 app.post("/api/vipps", async (req, res) => {
