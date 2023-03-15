@@ -1,9 +1,10 @@
 import express from "express"
+import axios from "axios"
 
 import dotenv from "dotenv"
+
 import { resolve } from "path"
 
-import axios from "axios"
 
 const app = express()
 dotenv.config()
